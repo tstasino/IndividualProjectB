@@ -89,8 +89,8 @@ namespace IndividualProjectB
                         {
                             FirstName = (string)trainerReader["FirstName"],
                             LastName = (string)trainerReader["LastName"],
-                            Subject = (string) trainerReader["subject"]
-                          
+                            Subject = (string)trainerReader["subject"]
+
                         };
                         trainers.Add(trainer);
                     }
@@ -131,7 +131,7 @@ namespace IndividualProjectB
                         assignment.OralMark = (int)assignmentReader["oralMark"];
                         assignment.TotalMark = (int)assignmentReader["totalMark"];
 
-                        
+
                         assignments.Add(assignment);
                     }
                     assignmentReader.Close();
@@ -425,6 +425,388 @@ namespace IndividualProjectB
                 }
             }
             return students;
+        }
+
+        public void CreateCourse(Course course)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string queryString = "insert into Courses (title,stream,type,startDate,endDate) " +
+                                        "values (@title,@stream,@type,@startDate,@endDate)";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+
+                    cmd.Parameters.Add(new SqlParameter("@title", course.Title));
+                    cmd.Parameters.Add(new SqlParameter("@stream", course.Stream));
+                    cmd.Parameters.Add(new SqlParameter("@type", course.Type));
+                    cmd.Parameters.Add(new SqlParameter("@startDate", course.Start_Date));
+                    cmd.Parameters.Add(new SqlParameter("@endDate", course.End_Date));
+
+                    int rowsInserted = cmd.ExecuteNonQuery();
+                    if (rowsInserted > 0)
+                    {
+                        Console.WriteLine($"Course: {course.Title} inserted successfully in the database ");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+        public void CreateStudent(Student student)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string queryString = "insert into Students (firstName,lastName,dateOfBirth,tuitionFees) " +
+                                         "values (@firstName,@lastName,@dateOfBirth,@tuitionFees)";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+
+                    cmd.Parameters.Add(new SqlParameter("@firstName", student.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@lastName", student.LastName));
+                    cmd.Parameters.Add(new SqlParameter("@dateOfBirth", student.DateOfBirth));
+                    cmd.Parameters.Add(new SqlParameter("@tuitionFees", student.TuitionFees));
+
+                    int rowsInserted = cmd.ExecuteNonQuery();
+                    if (rowsInserted > 0)
+                    {
+                        Console.WriteLine($"Student {student.FirstName} {student.LastName} inserted successfully in the database ");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+        public void CreateTrainer(Trainer trainer)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string queryString = "insert into Trainers (firstName,lastName,subject) " +
+                                         "values (@firstName,@lastName,@subject)";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+
+                    cmd.Parameters.Add(new SqlParameter("@firstName", trainer.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@lastName", trainer.LastName));
+                    cmd.Parameters.Add(new SqlParameter("@subject", trainer.Subject));
+
+                    int rowsInserted = cmd.ExecuteNonQuery();
+                    if (rowsInserted > 0)
+                    {
+                        Console.WriteLine($"Trainer {trainer.FirstName} {trainer.LastName} inserted successfully in the database ");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+        public void CreateAssignment(Assignment assignment)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string queryString = "insert into Assignments (description,subDateTime,oralMark,totalMark) " +
+                                        "values (@description,@subDateTime,@oralMark,@totalMark)";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+
+                    cmd.Parameters.Add(new SqlParameter("@description", assignment.Description));
+                    cmd.Parameters.Add(new SqlParameter("@subDateTime", assignment.SubDateTime));
+                    cmd.Parameters.Add(new SqlParameter("@oralMark", assignment.OralMark));
+                    cmd.Parameters.Add(new SqlParameter("@totalMark", assignment.TotalMark));
+
+                    int rowsInserted = cmd.ExecuteNonQuery();
+                    if (rowsInserted > 0)
+                    {
+                        Console.WriteLine($"Assignment: {assignment.Description} inserted successfully in the database ");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+        public void StudentsPerCourseConnection(StudentPerCourse studentPerCourse)
+        {
+            int courseId = 0;
+            int studentId = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                //getting the student id
+                try
+                {
+                    conn.Open();
+                    string queryString = "select studentId from Students " +
+                                        "where firstName like @firstName " +
+                                        "and lastName like @lastName ";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+                    cmd.Parameters.Add(new SqlParameter("@firstName", studentPerCourse.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@lastName", studentPerCourse.LastName));
+                    SqlDataReader studentReader = cmd.ExecuteReader();
+                    int count = 0;
+                    
+                    while (studentReader.Read())
+                    {
+                        studentId = (int)studentReader["studentId"];
+                        count++;
+                    }
+                    studentReader.Close();
+                    if (count == 0)
+                    {
+                        throw new Exception("There is no Student with that FirstName and LastName");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                // getting the course id
+                try
+                {
+                    conn.Open();
+                    string queryString = @"select courseId from Courses " +
+                                        "where title like @title " +
+                                        "and type like @type";
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+                    cmd.Parameters.Add(new SqlParameter("@title", studentPerCourse.Title));
+                    cmd.Parameters.Add(new SqlParameter("@type", studentPerCourse.Type));
+                    SqlDataReader courseReader = cmd.ExecuteReader();
+                    int count = 0;
+              
+                    while (courseReader.Read())
+                    {
+                        courseId = (int)courseReader["courseId"];
+                        count++;
+                    }
+                    courseReader.Close();
+                    if (count == 0)
+                    {
+                        throw new Exception("There is no Course with that Title and Type");
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+                // inserting the Students Per Course record in database
+                try
+                {
+                    conn.Open();
+                    string queryString = "insert into studentsPerCourse (courseId,studentId) " +
+                                        "values (@courseId,@studentId)";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+
+                    cmd.Parameters.Add(new SqlParameter("@courseId", courseId));
+                    cmd.Parameters.Add(new SqlParameter("@studentId", studentId));                    
+
+                    int rowsInserted = cmd.ExecuteNonQuery();
+                    if (rowsInserted > 0)
+                    {
+                        Console.WriteLine($"Course  {studentPerCourse.Title} and Student {studentPerCourse.FirstName} {studentPerCourse.LastName} connected successfully in the database ");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+            }
+        }
+
+        public void TrainersPerCourseConnection(TrainerPerCourse trainerPerCourse)
+        {
+            int courseId = 0;
+            int trainerId = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                //getting the trainer id
+                try
+                {
+                    conn.Open();
+                    string queryString = "select trainerId from Trainers " +
+                                        "where firstName like @firstName " +
+                                        "and lastName like @lastName ";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+                    cmd.Parameters.Add(new SqlParameter("@firstName", trainerPerCourse.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@lastName", trainerPerCourse.LastName));
+                    SqlDataReader trainerReader = cmd.ExecuteReader();
+                    int count = 0;
+
+                    while (trainerReader.Read())
+                    {
+                        trainerId = (int)trainerReader["trainerId"];
+                        count++;
+                    }
+                    trainerReader.Close();
+                    if (count == 0)
+                    {
+                        throw new Exception("There is no Trainer with that FirstName and LastName");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+                // getting the course id
+                try
+                {
+                    conn.Open();
+                    string queryString = @"select courseId from Courses " +
+                                        "where title like @title " +
+                                        "and type like @type";
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+                    cmd.Parameters.Add(new SqlParameter("@title", trainerPerCourse.Title));
+                    cmd.Parameters.Add(new SqlParameter("@type", trainerPerCourse.Type));
+                    SqlDataReader courseReader = cmd.ExecuteReader();
+                    int count = 0;
+
+                    while (courseReader.Read())
+                    {
+                        courseId = (int)courseReader["courseId"];
+                        count++;
+                    }
+                    courseReader.Close();
+                    if (count == 0)
+                    {
+                        throw new Exception("There is no Course with that Title and Type");
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+                // inserting the Trainer Per Course record in database
+                try
+                {
+                    conn.Open();
+                    string queryString = "insert into trainersPerCourse (trainerId,courseId) " +
+                                        "values (@trainerId,@courseId)";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+
+                    cmd.Parameters.Add(new SqlParameter("@courseId", courseId));
+                    cmd.Parameters.Add(new SqlParameter("@trainerId", trainerId));
+
+                    int rowsInserted = cmd.ExecuteNonQuery();
+                    if (rowsInserted > 0)
+                    {
+                        Console.WriteLine($"Course  {trainerPerCourse.Title} and Trainer {trainerPerCourse.FirstName} {trainerPerCourse.LastName} connected successfully in the database ");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+            }
         }
     }
 }

@@ -104,6 +104,154 @@ namespace IndividualProjectB
                     }
                     Console.WriteLine("===============================================================================================");
                 }
+                else if (choice == 0)
+                {
+                    int epilogh = 0;
+
+                    do
+                    {
+                        Course course = new Course();
+                        Console.WriteLine("Give the Course Title");
+                        course.Title = Console.ReadLine();
+                        Console.WriteLine("Give the Course Stream");
+                        course.Stream = Console.ReadLine();
+                        Console.WriteLine("Give the Course Type");
+                        course.Type = Console.ReadLine();
+                        Console.WriteLine("Give the Start Date");
+                        course.Start_Date = DateTime.Parse(Console.ReadLine());
+                        Console.WriteLine("Give the End Date");
+                        course.End_Date = DateTime.Parse(Console.ReadLine());
+
+                        //add to database
+                        DBService db = new DBService();
+                        db.CreateCourse(course);
+
+                        Console.WriteLine("Add another Course? Press 1  for yes or 0 for no");
+                        epilogh = int.Parse(Console.ReadLine());
+                    } while (epilogh != 0);
+                }
+                else if (choice == 1)
+                {
+                    int epilogh = 0;
+
+                    do
+                    {
+                        Student student = new Student();
+                        Console.WriteLine("Give the Student First Name");
+                        student.FirstName = Console.ReadLine();
+                        Console.WriteLine("Give the Student Last Name");
+                        student.LastName = Console.ReadLine();
+                        Console.WriteLine("Give the Date Of Birth");
+                        student.DateOfBirth = DateTime.Parse(Console.ReadLine());
+                        Console.WriteLine("Give the Tuition Fees");
+                        student.TuitionFees = double.Parse(Console.ReadLine());
+
+                        //insert into the database
+                        DBService db = new DBService();
+                        db.CreateStudent(student);
+    
+                        Console.WriteLine("Add another Student? Press 1  for yes or 0 for no");
+                        epilogh = int.Parse(Console.ReadLine());
+                    } while (epilogh != 0);
+                }
+                else if (choice == 2)
+                {
+                    int epilogh = 0;
+
+                    do
+                    {
+                        Trainer trainer = new Trainer();
+                        Console.WriteLine("Give the Trainer First Name");
+                        trainer.FirstName = Console.ReadLine();
+                        Console.WriteLine("Give the Trainer Last Name");
+                        trainer.LastName = Console.ReadLine();
+                        Console.WriteLine("Give the Trainer's subject");
+                        trainer.Subject = Console.ReadLine();
+
+                        //add to database
+                        DBService dB = new DBService();
+                        dB.CreateTrainer(trainer);
+                        
+                        Console.WriteLine("Add another Trainer? Press 1  for yes or 0 for no");
+                        epilogh = int.Parse(Console.ReadLine());
+                    } while (epilogh != 0);
+                }
+                else if (choice == 3)
+                {
+                    int epilogh = 0;
+
+                    do
+                    {
+                        Assignment assignment = new Assignment();
+                        //Console.WriteLine("Give the Assignment Title");
+                        //assignment.Title = Console.ReadLine();
+                        Console.WriteLine("Give the Assignment Description");
+                        assignment.Description = Console.ReadLine();
+                        Console.WriteLine("Give the Submission Date ");
+                        assignment.SubDateTime = DateTime.Parse(Console.ReadLine());
+                        Console.WriteLine("Give the Oral Mark");
+                        assignment.OralMark = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Give the Total Mark");
+                        assignment.TotalMark = int.Parse(Console.ReadLine());
+
+                        //add to database
+                        DBService db = new DBService();
+                        db.CreateAssignment(assignment);
+
+                        Console.WriteLine("Add another Assignment? Press 1  for yes or 0 for no");
+                        epilogh = int.Parse(Console.ReadLine());
+                    } while (epilogh != 0);
+                }
+                else if (choice == 4)
+                {
+                    int epilogh = 0;
+
+                    do
+                    {
+                        StudentPerCourse studentPerCourse = new StudentPerCourse();
+                        Console.WriteLine("Connect an existing Student with an existing Course");
+                        Console.WriteLine("Give the Student First Name");
+                        studentPerCourse.FirstName = Console.ReadLine();
+                        Console.WriteLine("Give the Student Last Name");
+                        studentPerCourse.LastName = Console.ReadLine();
+                        Console.WriteLine("Give the Course Title");
+                        studentPerCourse.Title = Console.ReadLine();
+                        Console.WriteLine("Give the Course Type (Part Time or Full Time)");
+                        studentPerCourse.Type = Console.ReadLine();
+
+                        //add to database
+                        DBService db = new DBService();
+                        db.StudentsPerCourseConnection(studentPerCourse);
+
+                        Console.WriteLine("Add another connection between Course and Student? Press 1  for yes or 0 for no");
+                        epilogh = int.Parse(Console.ReadLine());
+                    } while (epilogh != 0);
+                }
+                else if (choice == 5)
+                {
+                    int epilogh = 0;
+
+                    do
+                    {
+                        TrainerPerCourse trainersPerCourse = new TrainerPerCourse();
+                        Console.WriteLine("Connect an existing Trainer with an existing Course");
+                        Console.WriteLine("Give the Trainer First Name");
+                        trainersPerCourse.FirstName = Console.ReadLine();
+                        Console.WriteLine("Give the Trainer Last Name");
+                        trainersPerCourse.LastName = Console.ReadLine();
+                        Console.WriteLine("Give the Course Title");
+                        trainersPerCourse.Title = Console.ReadLine();
+                        Console.WriteLine("Give the Course Type (Part Time or Full Time)");
+                        trainersPerCourse.Type = Console.ReadLine();
+
+                        // add to database
+                        DBService db = new DBService();
+                        db.TrainersPerCourseConnection(trainersPerCourse);     
+    
+                        Console.WriteLine("Add another connection between Course and Trainer? Press 1  for yes or 0 for no");
+                        epilogh = int.Parse(Console.ReadLine());
+                    } while (epilogh != 0);
+                }
 
             } while (choice != 8);
 

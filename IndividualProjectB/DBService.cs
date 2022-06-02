@@ -808,5 +808,161 @@ namespace IndividualProjectB
 
             }
         }
+        public void AssignmentPerCoursePerStudentConnection(AssignmentPerCoursePerStudent assignmentPerCoursePerStudent)
+        {
+            int assignmentId = 0;
+            int courseId = 0;
+            int studentId = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                // getting the assignment id
+                try
+                {
+                    conn.Open();
+                    string queryString = @"select assignmentId from Assignments " +
+                                        "where assignmentId = @assignmentId";
+                                        
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+                    cmd.Parameters.Add(new SqlParameter("@assignmentId", assignmentPerCoursePerStudent.AssignmentId));
+                    
+                    SqlDataReader assignmentReader = cmd.ExecuteReader();
+                    int count = 0;
+
+                    while (assignmentReader.Read())
+                    {
+                        assignmentId = (int)assignmentReader["assignmentId"];
+                        count++;
+                    }
+                    assignmentReader.Close();
+                    if (count == 0)
+                    {
+                        throw new Exception("There is no Assignment with that ID ");
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+                // getting the course id
+                try
+                {
+                    conn.Open();
+                    string queryString = @"select courseId from Courses " +
+                                        "where title like @title " +
+                                        "and type like @type";
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+                    cmd.Parameters.Add(new SqlParameter("@title", assignmentPerCoursePerStudent.Title));
+                    cmd.Parameters.Add(new SqlParameter("@type", assignmentPerCoursePerStudent.Type));
+                    SqlDataReader courseReader = cmd.ExecuteReader();
+                    int count = 0;
+
+                    while (courseReader.Read())
+                    {
+                        courseId = (int)courseReader["courseId"];
+                        count++;
+                    }
+                    courseReader.Close();
+                    if (count == 0)
+                    {
+                        throw new Exception("There is no Course with that Title and Type");
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+                //getting the student id
+                try
+                {
+                    conn.Open();
+                    string queryString = "select studentId from Students " +
+                                        "where firstName like @firstName " +
+                                        "and lastName like @lastName ";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+                    cmd.Parameters.Add(new SqlParameter("@firstName", assignmentPerCoursePerStudent.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@lastName", assignmentPerCoursePerStudent.LastName));
+                    SqlDataReader studentReader = cmd.ExecuteReader();
+                    int count = 0;
+
+                    while (studentReader.Read())
+                    {
+                        studentId = (int)studentReader["studentId"];
+                        count++;
+                    }
+                    studentReader.Close();
+                    if (count == 0)
+                    {
+                        throw new Exception("There is no Student with that FirstName and LastName");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+                // inserting the Assignment Per Course Per Student record in database
+                try
+                {
+                    conn.Open();
+                    string queryString = "insert into assignmentsPerStudentPerCourse (assignmentId,studentId,courseId) " +
+                                        "values (@assignmentId,@studentId,@courseId)";
+
+                    SqlCommand cmd = new SqlCommand(queryString, conn);
+
+                    cmd.Parameters.Add(new SqlParameter("@assignmentId", assignmentId));
+                    cmd.Parameters.Add(new SqlParameter("@studentId", studentId));
+                    cmd.Parameters.Add(new SqlParameter("@courseId", courseId));
+                   
+
+                    int rowsInserted = cmd.ExecuteNonQuery();
+                    if (rowsInserted > 0)
+                    {
+                        Console.WriteLine($"Assignment  {assignmentPerCoursePerStudent.AssignmentId} and Course {assignmentPerCoursePerStudent.Title} Type: {assignmentPerCoursePerStudent.Type} and Student {assignmentPerCoursePerStudent.FirstName} {assignmentPerCoursePerStudent.LastName} connected successfully in the database ");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"Sql exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+            }
+        }
     }
 }

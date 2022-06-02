@@ -11,6 +11,8 @@ namespace IndividualProjectB
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Description { get; set; }
+
+        public int AssignmentId { get; set; }
         public string Title { get; set; }
         public string Stream { get; set; }
         public string Type { get; set; }
